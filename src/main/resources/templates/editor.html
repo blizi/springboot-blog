@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>Simple example - Editor.md examples</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/editormd.css" />
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+<div id="layout">
+    <header>
+        <h1>title:</h1>
+    </header>
+    <header>
+        <input id="con_title" type="text" class="form-control" placeholder="title" aria-label="Username" aria-describedby="basic-addon1">
+    </header>
+    <header>
+        <h1>content:</h1>
+    </header>
+    <div id="test-editormd">
+                <textarea style="display:none;">
+
+</textarea>
+    </div>
+</div>
+<button id="my_submit" type="button" class="btn btn-primary btn-lg btn-block">发表文章</button>
+<script src="js/jquery.min.js"></script>
+<script src="editormd.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+    var testEditor;
+
+    $(function() {
+        testEditor = editormd("test-editormd", {
+            width   : "90%",
+            height  : 640,
+            syncScrolling : "single",
+            path    : "lib/",
+            emoji:true,
+            saveHTMLToTextarea:true,
+            imageUpload:true,
+            imageFormats:["jpg","jpeg","gif","png","bmp","webp"],
+            imageUploadURL:"/content/upload",   /** 提交地址**/
+        });
+    });
+
+    my_submit.onclick = function () {
+        var content = testEditor.getMarkdown();
+        var title = document.getElementById("con_title").value
+        if(content==''||title==''){
+            alert('请输入标题或者内容！')
+        }else{
+            axios.post('/add', {
+            title:title,
+            content:content
+          })
+          .then(function (response) {
+            console.log(response.data);
+            if(response.data==1){
+                window.open('index')
+            }else{
+                alert('发表失败!')
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        }
+
+    };
+</script>
+</body>
+</html>
